@@ -1,0 +1,84 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" width="100%" height="100%">
+  <defs>
+    <linearGradient id="cpanelOrange" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ff7a3d" />
+      <stop offset="50%" stop-color="#f05a28" />
+      <stop offset="100%" stop-color="#d9440d" />
+    </linearGradient>
+    <linearGradient id="circuitGlow" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.9" />
+      <stop offset="100%" stop-color="#fed7aa" stop-opacity="0.4" />
+    </linearGradient>
+    <filter id="shadowDrop" x="-10%" y="-10%" width="125%" height="125%">
+      <feDropShadow dx="0" dy="6" stdDeviation="8" flood-color="#ea5219" flood-opacity="0.35" />
+    </filter>
+    <filter id="nodeGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="3" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <!-- Background Shield Hexagon -->
+  <rect x="16" y="16" width="208" height="208" rx="44" fill="#182230" stroke="#28374a" stroke-width="2.5" />
+  
+  <!-- Subtle Circuit Track Grid in Background -->
+  <path d="M 40 70 L 70 70 L 90 90 M 170 170 L 150 150 L 120 150 M 170 80 L 150 100" stroke="#2a3a4e" stroke-width="2" fill="none" stroke-linecap="round" />
+  <circle cx="40" cy="70" r="3" fill="#3b4e66" />
+  <circle cx="170" cy="170" r="3" fill="#3b4e66" />
+  <circle cx="170" cy="80" r="3" fill="#3b4e66" />
+
+  <!-- Main 'S' Circuit Symbol -->
+  <g filter="url(#shadowDrop)">
+    <!-- Circuit S - Upper Arch -->
+    <path d="M 160 82 
+             C 160 56, 120 48, 96 50 
+             C 68 52, 54 72, 54 94 
+             C 54 122, 94 120, 146 130 
+             C 178 136, 186 156, 186 174 
+             C 186 200, 154 212, 120 212 
+             C 86 212, 60 196, 56 172" 
+          fill="none" 
+          stroke="url(#cpanelOrange)" 
+          stroke-width="18" 
+          stroke-linecap="round" 
+          stroke-linejoin="round" />
+
+    <!-- Core Inner Circuit Line -->
+    <path d="M 160 82 
+             C 160 56, 120 48, 96 50 
+             C 68 52, 54 72, 54 94 
+             C 54 122, 94 120, 146 130 
+             C 178 136, 186 156, 186 174 
+             C 186 200, 154 212, 120 212 
+             C 86 212, 60 196, 56 172" 
+          fill="none" 
+          stroke="url(#circuitGlow)" 
+          stroke-width="4" 
+          stroke-linecap="round" 
+          stroke-dasharray="8 12" />
+  </g>
+
+  <!-- Integrated Database Cylinders / Circuit Microchips -->
+  <!-- Upper Node (Client Request) -->
+  <g filter="url(#nodeGlow)">
+    <circle cx="160" cy="82" r="10" fill="#ffffff" />
+    <circle cx="160" cy="82" r="6" fill="#f05a28" />
+  </g>
+
+  <!-- Middle Intersection Node (PHP Engine) -->
+  <g filter="url(#nodeGlow)">
+    <circle cx="120" cy="125" r="9" fill="#ffffff" />
+    <circle cx="120" cy="125" r="5" fill="#f05a28" />
+  </g>
+
+  <!-- Lower Terminal Database Disk (MySQL Database) -->
+  <g filter="url(#nodeGlow)">
+    <ellipse cx="56" cy="172" r="13" rx="14" ry="7" fill="#f05a28" />
+    <ellipse cx="56" cy="170" r="13" rx="14" ry="7" fill="#ffffff" />
+    <ellipse cx="56" cy="170" r="8" rx="8" ry="4" fill="#f05a28" />
+  </g>
+
+  <!-- Query Pulse Beams -->
+  <circle cx="70" cy="68" r="3.5" fill="#ffffff" />
+  <circle cx="168" cy="154" r="3.5" fill="#ffffff" />
+</svg>

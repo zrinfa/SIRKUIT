@@ -1,0 +1,16 @@
+# Kredensial database lokal: jangan pernah ikut terunggah.
+lib/config.php
+
+# Cadangan dan log runtime.
+*.bak
+*.log
+storage/logs/
+
+# Berkas lingkungan lokal.
+.env
+
+# Sistem operasi dan editor.
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

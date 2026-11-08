@@ -1,0 +1,53 @@
+# SIRKUIT - .htaccess (root)
+# Media pembelajaran PHP + MySQL di hosting cPanel.
+# Apache 2.4 + mod_rewrite + mod_headers.
+
+Options -Indexes -MultiViews
+DirectoryIndex index.html index.php
+
+# ---- rute singkat: /api/siswa -> /api/siswa.php --------------------------
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  # Beberapa hosting menghapus header Authorization sebelum sampai ke PHP.
+  # Salin ke variabel lingkungan agar token_bearer() tetap dapat membacanya.
+  RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+  # Bila folder ini dipasang di subdirektori, sesuaikan RewriteBase.
+  # RewriteBase /sirkuit/
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule ^api/([a-z0-9_-]+)/?$ api/$1.php [L,QSA]
+  # Berkas cadangan dan konfigurasi tidak boleh diminta lewat URL.
+  RewriteRule ^(lib|storage)/ - [F,L]
+</IfModule>
+
+# ---- berkas yang tidak boleh diunduh ------------------------------------
+<FilesMatch "\.(sql|log|md|bak|sh|jsonl)$">
+  Require all denied
+</FilesMatch>
+<Files "config.php">
+  Require all denied
+</Files>
+<Files ".env">
+  Require all denied
+</Files>
+
+# ---- header keamanan ------------------------------------------------------
+<IfModule mod_headers.c>
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set X-Frame-Options "SAMEORIGIN"
+  Header always set Referrer-Policy "same-origin"
+</IfModule>
+
+# ---- aset statis ----------------------------------------------------------
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresByType text/css "access plus 1 day"
+  ExpiresByType application/javascript "access plus 1 day"
+  ExpiresByType image/svg+xml "access plus 7 days"
+</IfModule>
+
+# ---- kesalahan standar: biarkan Apache yang menjawab 404 ------------------
+# Kasus 404 pada modul ajar terjadi karena rute memang tidak ada, jadi
+# jangan dialihkan diam-diam ke index.html.
+ErrorDocument 403 /403.html
+ErrorDocument 404 /404.html

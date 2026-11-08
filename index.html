@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SIRKUIT - Virtual Lab RPL SMKN 1 Mejayan</title>
+  <meta name="description" content="Media Pembelajaran Pemrograman Web dan Basis Data. Kurikulum Merdeka Fase F (PPLG/RPL) SMKN 1 Mejayan." />
+  <meta name="theme-color" content="#182230" />
+  <script>
+    (function () {
+      var tema = "light";
+      try {
+        tema = localStorage.getItem("sirkuit_tema") || "light";
+      } catch (e) { }
+      document.documentElement.dataset.theme = tema === "dark" ? "dark" : "light";
+    })();
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css?v=3.3.0" />
+  <script src="js/config.js?v=3.3.0"></script>
+  <script src="js/api.js?v=3.3.0"></script>
+  <script src="js/data-grid.js?v=3.3.0"></script>
+  <script src="js/task-cycle.js?v=3.3.0"></script>
+  <script src="js/pbl-simulator.js?v=3.3.0"></script>
+  <script src="js/quiz-engine.js?v=3.3.0"></script>
+  <script src="js/teacher-dashboard.js?v=3.3.0"></script>
+  <script src="js/lab-uji.js?v=3.3.0"></script>
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.1/examples/jsm/"
+      }
+    }
+  </script>
+</head>
+<body>
+
+  <!-- Topbar 2-Tingkat Bergaya cPanel Dashboard (Bebas Benturan / Anti Nabrak) -->
+  <header id="topbar" class="hidden">
+    <div class="topbar-main">
+      <div class="brand">
+        <img src="img/logo-sirkuit.svg" alt="Logo SIRKUIT" class="brand-logo-img" />
+        <div class="brand-text">
+          <span class="brand-name">SIRKUIT</span>
+          <span class="brand-sub">Virtual Lab RPL SMKN 1 Mejayan</span>
+        </div>
+      </div>
+
+      <div class="topbar-right">
+        <span class="conn-badge" id="connBadge"><span id="connText">Menyiapkan koneksi...</span></span>
+        <button class="text-btn" id="btnCekSesi" title="Periksa status sesi">Cek Sesi</button>
+        <button class="text-btn" id="btnTema" title="Ganti mode tampilan">Tema Gelap</button>
+        <span class="user-chip"><span id="userChip">-</span></span>
+        <button class="text-btn btn-logout-style" id="btnLogout">Keluar</button>
+      </div>
+    </div>
+
+    <div class="topbar-nav-bar">
+      <nav id="mainNav" aria-label="Navigasi utama">
+        <button class="nav-btn" data-view="tugas">Tugas</button>
+        <button class="nav-btn" data-view="grid">Lab Kueri</button>
+        <button class="nav-btn" data-view="lab">Lab Uji Kode</button>
+        <button class="nav-btn" data-view="modul">Modul & Kuis</button>
+        <button class="nav-btn" data-view="workspace">Alur Request</button>
+        <button class="nav-btn" data-view="workspace-inspect">Inspeksi JSON</button>
+        <button class="nav-btn" data-view="dashboard">Dashboard Guru</button>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- Halaman Login -->
+    <section id="view-login">
+      <div class="login-info">
+        <div class="login-brand-header">
+          <img src="img/logo-sirkuit.svg" alt="Logo SIRKUIT" class="login-logo-large" />
+          <div class="login-brand-text">
+            <div class="login-badge-pill">Laboratorium Virtual PPLG / RPL</div>
+            <h1>SIRKUIT</h1>
+          </div>
+        </div>
+        <p class="tagline">Simulasi Interaktif Rangkaian Kueri & Uji Integrasi Terpadu</p>
+        <p class="subtitle">Platform praktik pemrograman web PHP 8.2 dan kueri basis data MySQL di lingkungan server cPanel nyata untuk siswa SMKN 1 Mejayan.</p>
+
+        <!-- Animasi GIF Interaktif Alur Data SIRKUIT -->
+        <div class="login-anim-wrapper">
+          <img src="img/sirkuit-animation.gif" alt="Animasi Sirkuit Alur Data" class="login-anim-img" />
+          <div class="anim-caption">
+            <span class="anim-dot"></span>
+            <span>Simulasi Real-time Alur Request Client → Apache → PHP 8.2 → MySQL</span>
+          </div>
+        </div>
+
+        <ul class="fact-list">
+          <li>Praktik PHP 8.2 & PDO MySQL secara riil</li>
+          <li>Pengumpulan tugas berbasis kode dan grid data</li>
+          <li>Simulasi visual arsitektur server & REST API</li>
+        </ul>
+      </div>
+
+      <div class="login-form-wrap">
+        <form class="panel login-card" id="loginForm" autocomplete="off">
+          <h2>Masuk Akun</h2>
+          <p class="muted">Silakan pilih peran untuk mengakses laboratorium virtual.</p>
+
+          <div class="role-tabs">
+            <button type="button" class="role-tab active" data-role="siswa">Siswa RPL</button>
+            <button type="button" class="role-tab" data-role="guru">Guru Produktif</button>
+          </div>
+
+          <div class="field">
+            <label id="idLabel" for="loginId">Email / NISN</label>
+            <input class="input input-mono" id="loginId" type="text" placeholder="Masukkan NISN atau email" />
+          </div>
+          <div class="field">
+            <label for="loginPass">Kata Sandi</label>
+            <input class="input input-mono" id="loginPass" type="password" placeholder="Masukkan kata sandi" />
+          </div>
+          <div id="loginError" class="form-error hidden"></div>
+          <button class="btn btn-primary btn-block" type="submit">Masuk ke Lab</button>
+
+          <div class="login-badges">
+            <span class="badge" id="loginConnBadge">Menghubungkan ke backend...</span>
+            <span class="badge">PHP 8.2 + MySQL</span>
+          </div>
+
+          <div class="demo-panel">
+            <h3>Pilihan Masuk Cepat (Akun Demo)</h3>
+            <button type="button" class="demo-btn" id="demoSiswa">
+              <b>Masuk sebagai Siswa Demo</b>
+              <span>Fazrin Mauza · XI RPL 1</span>
+            </button>
+            <button type="button" class="demo-btn" id="demoGuru">
+              <b>Masuk sebagai Guru Demo</b>
+              <span>Bpk. Hendra Kusuma, S.Kom. · Guru Produktif</span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- Halaman Alur Request & Skenario PBL -->
+    <section id="view-workspace" class="hidden">
+      <div class="view-header">
+        <h2 class="section-title">Alur Request & Arsitektur Sistem</h2>
+        <p class="section-sub">Visualisasi interaktif alur request data: Client → Apache Web Server → PHP 8.2 → Database MySQL.</p>
+      </div>
+
+      <div class="panel pbl-stepper">
+        <div class="pbl-step" data-step="1"><span class="num">1</span><span class="lbl">Orientasi Masalah</span><button class="btn btn-sm btn-primary hidden" data-next="1">Lanjut</button></div>
+        <div class="pbl-step" data-step="2"><span class="num">2</span><span class="lbl">Pemetaan 4 Komponen</span><button class="btn btn-sm btn-primary hidden" data-next="2">Lanjut</button></div>
+        <div class="pbl-step" data-step="3"><span class="num">3</span><span class="lbl">Penyelidikan Request</span><button class="btn btn-sm btn-primary hidden" data-next="3">Lanjut</button></div>
+        <div class="pbl-step" data-step="4"><span class="num">4</span><span class="lbl">Solusi Konfigurasi</span></div>
+        <div class="pbl-step" data-step="5"><span class="num">5</span><span class="lbl">Evaluasi & Refleksi</span></div>
+      </div>
+
+      <div class="panel scenario-bar" id="scenarioChips">
+        <span class="label">Skenario</span>
+      </div>
+
+      <div class="ws-grid">
+        <div>
+          <div class="panel canvas-shell" id="canvasShell">
+            <div class="hud hud-top-left">
+              <button class="hud-btn" id="hudReset">Reset Kamera</button>
+              <button class="hud-btn" id="hudTop">Tampak Atas</button>
+              <button class="hud-btn" id="hudIso">Isometrik</button>
+              <button class="hud-btn" id="hudRotate">Auto-Rotate: OFF</button>
+            </div>
+            <div class="hud hud-top-right">
+              <button class="hud-btn on" id="hudPerfHigh" title="PC laboratorium, kualitas tinggi">Mode Tinggi</button>
+              <button class="hud-btn" id="hudPerfLight" title="Perangkat hemat GPU">Mode Ringan</button>
+            </div>
+            <div class="hud hud-bottom-left">
+              <span class="hud-readout"><span id="fpsVal">60</span> FPS</span>
+              <span class="hud-readout" id="glReadout">WebGL Three.js r160</span>
+            </div>
+          </div>
+
+          <div class="panel sim-toolbar">
+            <div class="sim-group">
+              <span class="cap">Metode HTTP</span>
+              <div class="method-row" id="methodRow">
+                <button class="method-btn sel-GET" data-method="GET">GET</button>
+                <button class="method-btn" data-method="POST">POST</button>
+                <button class="method-btn" data-method="PUT">PUT</button>
+                <button class="method-btn" data-method="DELETE">DELETE</button>
+              </div>
+            </div>
+            <div class="sim-group grow">
+              <span class="cap">Endpoint URL</span>
+              <select class="input input-mono" id="endpointSelect"></select>
+            </div>
+            <div class="sim-group">
+              <span class="cap">Kecepatan</span>
+              <div class="speed-row" id="speedRow">
+                <button class="chip" data-speed="0.5">0.5x</button>
+                <button class="chip active" data-speed="1">1x</button>
+                <button class="chip" data-speed="2">2x</button>
+              </div>
+            </div>
+            <div class="sim-group">
+              <span class="cap">Rangkaian</span>
+              <div class="row-gap">
+                <button class="btn btn-primary" id="btnSendRequest">Jalankan Penuh</button>
+                <button class="btn" id="btnRepeat">Ulangi</button>
+                <button class="btn btn-danger" id="btnStopFlow">Hentikan</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel process-bar">
+            <span class="cap">Jalankan Proses per Langkah</span>
+            <div class="proc-row" id="processRow">
+              <button class="proc-btn" data-proc="0">1. Client: Menyusun Request</button>
+              <button class="proc-btn" data-proc="1">2. Apache: Routing & Rate Limit</button>
+              <button class="proc-btn" data-proc="2">3. PHP: Session & Logika</button>
+              <button class="proc-btn" data-proc="3">4. MySQL: Eksekusi SQL</button>
+              <button class="proc-btn" data-proc="4">5. Response ke Client</button>
+            </div>
+            <div class="proc-status" id="procStatus">Belum ada proses dijalankan.</div>
+          </div>
+
+          <div class="node-quickbar" id="nodeQuickbar"></div>
+        </div>
+
+        <div class="side-stack">
+          <div class="panel">
+            <div class="panel-head">
+              <h3>Studi Kasus PBL <span class="tag" id="pblStageTag">Tahap 1</span></h3>
+            </div>
+            <div class="panel-body problem-card" id="problemCard"></div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-head">
+              <h3>Node Inspector</h3>
+              <span class="tag">Klik node 3D</span>
+            </div>
+            <div class="panel-body" id="inspectorBody"></div>
+          </div>
+
+          <div class="panel" id="jsonViewerPanel">
+            <div class="panel-head">
+              <h3>Payload & Respons JSON</h3>
+              <span class="tag">API Inspector</span>
+            </div>
+            <div class="txn-bar">
+              <span class="txn-badge GET" id="txnMethod">GET</span>
+              <span class="txn-path" id="txnPath">/api/siswa.php</span>
+              <span class="status-badge s200" id="txnStatus">200 OK</span>
+              <span class="txn-meta" id="txnMeta">Waktu 38 ms | Payload 1.4 KB</span>
+            </div>
+            <div class="json-tabs">
+              <button class="json-tab active" data-pane="headers">Request Headers</button>
+              <button class="json-tab" data-pane="body">Request Body</button>
+              <button class="json-tab" data-pane="sql">SQL Trace</button>
+              <button class="json-tab" data-pane="response">Response</button>
+            </div>
+            <pre class="json-pane" id="pane_headers"></pre>
+            <pre class="json-pane hidden" id="pane_body"></pre>
+            <pre class="json-pane hidden" id="pane_sql"></pre>
+            <pre class="json-pane hidden" id="pane_response"></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Halaman Tugas -->
+    <section id="view-tugas" class="hidden">
+      <div class="view-header">
+        <h2 class="section-title">Manajemen Tugas</h2>
+        <p class="section-sub">Daftar tugas praktik pemrograman web dan basis data dari guru.</p>
+      </div>
+
+      <div class="tugas-grid">
+        <div class="panel">
+          <div class="panel-head">
+            <h3>Daftar Tugas</h3>
+            <span class="tag" id="tugasStat">Memuat tugas...</span>
+          </div>
+          <div class="panel-body">
+            <ol class="ex-list" id="tugasList"></ol>
+            <button class="btn btn-sm" id="tugasMuat" style="margin-top:14px">Muat Ulang</button>
+          </div>
+        </div>
+
+        <div>
+          <div class="panel">
+            <div class="panel-head">
+              <h3 id="tugasJudul">Detail Tugas</h3>
+              <span class="tag" id="tugasTag"></span>
+            </div>
+            <div class="panel-body" id="tugasDetail"></div>
+          </div>
+
+          <div class="panel" id="tugasCaraSiswa" style="margin-top:14px">
+            <div class="panel-body">
+              <span class="cap">Panduan Pengerjaan</span>
+              <p class="muted">Pilih tugas pada daftar, klik <b>Kerjakan</b> untuk membuka editor, jalankan kode/kueri Anda, lalu kirim hasil jawaban untuk dinilai oleh guru.</p>
+            </div>
+          </div>
+
+          <div id="tugasGuru" class="hidden" style="margin-top:14px">
+            <div class="panel" id="tugasFormPanel">
+              <div class="panel-head">
+                <h3 id="tugasFormJudul">Tambah Tugas Baru</h3>
+                <span class="tag">Tabel Tasks</span>
+              </div>
+              <form class="panel-body tugas-form" id="tugasForm" autocomplete="off">
+                <label class="cap" for="tugasJudulInput">Judul Tugas</label>
+                <input class="input" id="tugasJudulInput" placeholder="Contoh: Query JOIN laporan nilai per kelas" />
+                <label class="cap" for="tugasInstruksi">Instruksi untuk Siswa</label>
+                <textarea class="input tugas-instruksi-input" id="tugasInstruksi" rows="3" placeholder="Tulis instruksi pengerjaan dan kriteria penilaian..."></textarea>
+                <div class="row-gap wrap">
+                  <span>
+                    <label class="cap" for="tugasBahasa">Bahasa</label>
+                    <select class="input" id="tugasBahasa">
+                      <option value="sql">SQL MySQL</option>
+                      <option value="php" selected>PHP 8.2</option>
+                      <option value="js">JavaScript</option>
+                    </select>
+                  </span>
+                  <span>
+                    <label class="cap" for="tugasKelas">Kelas</label>
+                    <input class="input" id="tugasKelas" list="daftarKelas" placeholder="XI RPL 1" />
+                    <datalist id="daftarKelas"></datalist>
+                  </span>
+                  <span>
+                    <label class="cap" for="tugasLatihan">Latihan Terkait</label>
+                    <select class="input" id="tugasLatihan"></select>
+                  </span>
+                  <span>
+                    <label class="cap" for="tugasTenggat">Batas Waktu</label>
+                    <input class="input" id="tugasTenggat" type="datetime-local" />
+                  </span>
+                  <span>
+                    <label class="cap" for="tugasBobot">Bobot</label>
+                    <input class="input" id="tugasBobot" type="number" min="1" max="10" value="1" />
+                  </span>
+                </div>
+                <div class="row-gap wrap" style="margin-top:14px">
+                  <button class="btn btn-primary" type="submit" id="tugasSubmitBtn">Simpan Tugas</button>
+                  <button class="btn btn-sm hidden" type="button" id="tugasBatalEdit">Batal</button>
+                  <button class="btn btn-danger" type="button" id="tugasArsip">Arsipkan Tugas</button>
+                </div>
+              </form>
+            </div>
+
+            <div class="panel" style="margin-top:14px">
+              <div class="panel-head">
+                <h3>Kiriman Jawaban Siswa</h3>
+                <span class="tag">Pengumpulan</span>
+              </div>
+              <div class="panel-body table-shell" id="tugasKiriman"><p class="muted">Pilih salah satu tugas untuk melihat kiriman siswa.</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Halaman Lab Kueri SQL -->
+    <section id="view-grid" class="hidden">
+      <div class="view-header">
+        <h2 class="section-title">Lab Kueri SQL</h2>
+        <p class="section-sub">Tulis dan uji kueri SQL langsung ke basis data MySQL ruang latihan.</p>
+      </div>
+
+      <div id="tugasBarGrid" class="tugas-bar hidden"></div>
+
+      <div class="panel kueri-shell">
+        <div class="panel-head">
+          <h3>Editor Kueri SQL</h3>
+          <span class="tag" id="gqSisa">Dialek MySQL / MariaDB</span>
+        </div>
+        <textarea class="code-input" id="gqSql" spellcheck="false" rows="6">SELECT s.nisn, s.nama, s.kelas, n.nilai
+FROM siswa s
+JOIN nilai_ukk n ON n.siswa_id = s.id
+WHERE s.kelas = 'XI RPL 1'
+ORDER BY n.nilai DESC
+LIMIT 10;</textarea>
+        <div class="panel-body row-gap wrap">
+          <button class="btn btn-primary" id="gqRun">Jalankan di MySQL</button>
+          <button class="btn" data-sql="SHOW TABLES;">SHOW TABLES</button>
+          <button class="btn" data-sql="DESCRIBE siswa;">DESCRIBE siswa</button>
+          <span class="cap" style="margin-left:auto">Pintasan: Ctrl + Enter</span>
+        </div>
+        <div class="form-error hidden" id="gqError"></div>
+      </div>
+
+      <div id="gridHasil"></div>
+
+      <div style="margin-top:24px">
+        <h3 class="sub-head">Jelajah Tabel Materi Ajar</h3>
+        <p class="cap" style="margin-bottom:12px">Eksplorasi tabel materi dan struktur kolom.</p>
+        <div id="gridTabel"></div>
+      </div>
+
+      <div class="panel" style="margin-top:16px">
+        <div class="panel-head">
+          <h3>Struktur Kolom Tabel</h3>
+          <span class="tag">information_schema</span>
+        </div>
+        <div class="panel-body"><pre class="json-pane" id="gridStruktur"></pre></div>
+      </div>
+    </section>
+
+    <!-- Halaman Lab Uji Kode -->
+    <section id="view-lab" class="hidden">
+      <div class="view-header">
+        <h2 class="section-title">Lab Uji Kode</h2>
+        <p class="section-sub">Tulis dan uji kode program PHP, JavaScript, atau SQL dengan validasi otomatis.</p>
+      </div>
+
+      <div id="tugasBarLab" class="tugas-bar hidden"></div>
+
+      <div class="lab-grid">
+        <div class="panel">
+          <div class="panel-head">
+            <h3>Daftar Latihan</h3>
+            <span class="tag" id="labProgress">Memuat latihan...</span>
+          </div>
+          <div class="panel-body">
+            <ol class="ex-list" id="labExercises"></ol>
+            <div class="ex-detail" id="labExDetail"></div>
+            <div class="row-gap wrap" style="margin-top:14px">
+              <button class="btn btn-sm" id="labLoadTask">Kerangka Kode</button>
+              <button class="btn btn-sm" id="labPrevTask">Sebelumnya</button>
+              <button class="btn btn-sm" id="labNextTask">Berikutnya</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel lab-editor">
+          <div class="panel-head">
+            <h3>Editor Kode</h3>
+            <div class="row-gap wrap">
+              <select class="input input-mono" id="labMode" title="Kondisi sistem">
+                <option value="NORMAL">Sistem Normal</option>
+                <option value="E401">Sistem Error 401</option>
+                <option value="E404">Sistem Error 404</option>
+                <option value="E429">Sistem Error 429</option>
+                <option value="E500">Sistem Error 500</option>
+              </select>
+              <select class="input" id="labLang">
+                <option value="php">PHP 8.2 (server-side)</option>
+                <option value="js">JavaScript (fetch API)</option>
+                <option value="sql">SQL (MySQL/MariaDB)</option>
+              </select>
+            </div>
+          </div>
+          <textarea class="code-input" id="labCode" spellcheck="false" rows="18"></textarea>
+          <div class="panel-body row-gap wrap">
+            <button class="btn btn-primary" id="labRun">Jalankan Kode</button>
+            <button class="btn btn-danger" id="labStop">Hentikan</button>
+            <button class="btn" id="labClear">Bersihkan Output</button>
+            <button class="btn" id="labCheck">Periksa Jawaban</button>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head">
+            <h3>Output Konsol</h3>
+            <span class="tag" id="labRunStat">Belum dijalankan</span>
+          </div>
+          <pre class="console" id="labOut"></pre>
+          <div class="panel-body">
+            <div class="row-gap wrap">
+              <span class="cap">Struktur Tabel</span>
+              <span class="spacer"></span>
+              <span class="tag" id="labJalankan">Memeriksa runner PHP</span>
+            </div>
+            <pre class="json-pane" id="labSchema"></pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="labGridHasil" style="margin-top:16px"></div>
+    </section>
+
+    <!-- Halaman Modul & Kuis -->
+    <section id="view-modul" class="hidden">
+      <div class="view-header">
+        <h2 class="section-title">Modul Materi Pembelajaran</h2>
+        <p class="section-sub">Fondasi konsep arsitektur web PHP/MySQL dan integrasi REST API.</p>
+      </div>
+      <div class="module-grid" id="moduleGrid"></div>
+
+      <div class="view-header" style="margin-top:28px">
+        <h2 class="section-title">Kuis Evaluasi Diagnostik</h2>
+        <p class="section-sub">12 butir soal evaluasi pemahaman konsep (KKM: 75).</p>
+      </div>
+      <div class="panel quiz-card" id="quizCard">
+        <div id="quizList"></div>
+        <div class="row-gap wrap" style="margin-top:20px">
+          <button class="btn btn-primary" id="btnSubmitQuiz">Kumpulkan Jawaban</button>
+          <button class="btn hidden" id="btnRetryQuiz">Ulangi Kuis (Remedial)</button>
+        </div>
+        <div id="quizResult" class="panel quiz-result hidden"></div>
+      </div>
+    </section>
+
+    <!-- Halaman Dashboard Monitoring Guru -->
+    <section id="view-dashboard" class="hidden">
+      <div class="view-header">
+        <h2 class="section-title">Dashboard Monitoring Guru</h2>
+        <p class="section-sub">Rekapitulasi pencapaian KKM, penilaian tugas, dan aktivitas belajar siswa di kelas.</p>
+      </div>
+
+      <div class="kpi-grid" id="kpiGrid"></div>
+
+      <div class="panel dash-filters">
+        <label class="cap" for="dashKelas">Filter Kelas</label>
+        <select class="input" id="dashKelas">
+          <option value="SEMUA">Semua Kelas</option>
+          <option value="XI RPL 1">XI RPL 1</option>
+          <option value="XI RPL 2">XI RPL 2</option>
+        </select>
+        <label class="cap" for="dashKkm">Status KKM</label>
+        <select class="input" id="dashKkm">
+          <option value="SEMUA">Semua</option>
+          <option value="TUNTAS">Tuntas</option>
+          <option value="BELUM">Belum Tuntas</option>
+        </select>
+        <input class="input" id="dashSearch" placeholder="Cari nama siswa..." />
+        <span class="spacer"></span>
+        <span class="mono" id="rowCount"></span>
+        <button class="btn btn-sm" id="btnCsv">Unduh CSV</button>
+        <button class="btn btn-sm" id="btnDashMuat">Muat Ulang</button>
+      </div>
+
+      <div class="panel table-shell">
+        <table class="rekap">
+          <thead>
+            <tr>
+              <th>No</th><th>NISN</th><th>Nama Siswa</th><th>Kelas</th>
+              <th>Nilai UKK</th><th>Skenario PBL</th>
+              <th>Tugas Selesai</th><th>Rata Tugas</th><th>Kuis Terbaik</th>
+              <th>Status KKM</th><th>Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="rekapBody"></tbody>
+        </table>
+      </div>
+
+      <div class="dash-columns">
+        <div class="panel">
+          <div class="panel-head">
+            <h3>Log Aktivitas Siswa</h3>
+            <span class="tag">Live Monitoring</span>
+          </div>
+          <div class="log-feed" id="logFeed"></div>
+        </div>
+        <div>
+          <h3 class="sub-head" style="margin-bottom:12px">Ringkasan Validasi Kelayakan</h3>
+          <div class="validasi-grid" id="validasiGrid"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer id="appFooter">
+    <div class="footer-inner">
+      <span><b>SIRKUIT</b> — Platform Simulasi & Praktik Pemrograman Web dan Basis Data</span>
+      <span class="footer-meta">SMKN 1 Mejayan · PTI FT UNESA</span>
+    </div>
+  </footer>
+
+  <div id="toastRoot"></div>
+  <noscript><div class="noscript">Aplikasi SIRKUIT memerlukan JavaScript dan WebGL.</div></noscript>
+
+  <script type="module" src="js/main.js?v=3.3.0"></script>
+</body>
+</html>

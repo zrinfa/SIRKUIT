@@ -1,0 +1,3 @@
+# Berkas internal PHP (config, koneksi, runner) tidak boleh diakses lewat URL.
+# Bila hosting menolak direktif ini, Rule Rewrite pada .htaccess root tetap memblokir.
+Require all denied
